@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ROI Calculator for Vehicle Rental Companies - Calculate your potential returns with iVMS fleet management solutions">
+    <title>ROI Calculator - Vehicle Rental Companies | IVMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="src/images/ivms-logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #004E98;
+            --secondary-blue: #3A6EA5;
+            --teal-primary: #00A3A3;
+            --teal-light: #00D1D1;
+            --teal-dark: #007A7A;
+            --dark-bg: #0A0A0A;
+            --light-bg: #FFFFFF;
+            --text-primary: #2F2F2F;
+            --text-secondary: rgba(47, 47, 47, 0.8);
+            --text-light: #FFFFFF;
+            --text-muted: #666666;
+            --border-light: #EDEDED;
+            --card-bg: #f7f7f9;
+            --white: #FFFFFF;
+            --black: #000000;
+            --text-dark: #2F2F2F;
+            --font-family-primary: "Suisse BP Intl", "Inter", sans-serif;
+        }
+        
+        body {
+            font-family: var(--font-family-primary);
+            background-color: var(--white);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            scroll-behavior: smooth;
+        }
+        
+        .calculator-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .input-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border-light);
+            margin-bottom: 2rem;
+        }
+        
+        .results-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 24px rgba(0, 78, 152, 0.12);
+            border: 1px solid var(--border-light);
+            margin-bottom: 2rem;
+        }
+        
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .input-label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border-light);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: var(--font-family-primary);
+            background: var(--white);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 78, 152, 0.1);
+        }
+        
+        .currency-input {
+            position: relative;
+        }
+        
+        .currency-symbol {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-weight: 600;
+            pointer-events: none;
+        }
+        
+        .currency-input .input-field {
+            padding-left: 2.5rem;
+        }
+        
+        .percentage-input {
+            position: relative;
+        }
+        
+        .percentage-symbol {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-weight: 600;
+            pointer-events: none;
+        }
+        
+        .percentage-input .input-field {
+            padding-right: 2.5rem;
+        }
+        
+        .metric-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--border-light);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        
+        .positive-metric {
+            color: #10B981 !important;
+        }
+        
+        .savings-metric {
+            color: var(--teal-primary) !important;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .benefit-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .benefit-item:last-child {
+            border-bottom: none;
+        }
+        
+        .benefit-description {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .benefit-value {
+            font-weight: 700;
+            color: var(--teal-primary);
+            font-size: 1.1rem;
+        }
+        
+        .main-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            border: none;
+            box-shadow: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            max-width: 100vw;
+            transition: background 0.2s, backdrop-filter 0.2s;
+        }
+
+        .nav-logo img {
+            height: 64px;
+            max-width: 220px;
+            width: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link {
+            color: #fff;
+            font-weight: 500;
+            font-size: 1.05rem;
+            padding: 0.5rem 1.2rem;
+            background: none;
+            border: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            position: relative;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            text-decoration: none;
+        }
+
+        .nav-link:hover, .nav-link:focus {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+        }
+
+        .cta-button {
+            background: var(--primary-blue);
+            color: var(--text-light);
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            font-size: 1rem;
+            box-shadow: 0 4px 16px rgba(0, 78, 152, 0.15);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .cta-button:hover {
+            background: var(--secondary-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(0, 78, 152, 0.25);
+        }
+        
+        .chart-container {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--border-light);
+        }
+        
+        .payback-period {
+            background: linear-gradient(135deg, var(--primary-blue), var(--teal-primary));
+            color: var(--white);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            margin: 2rem 0;
+        }
+        
+        .payback-value {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .payback-label {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .calculator-container {
+                padding: 1rem;
+            }
+            
+            .input-card, .results-card {
+                padding: 1.5rem;
+            }
+            
+            .metric-value {
+                font-size: 1.5rem;
+            }
+            
+            .payback-value {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="fixed w-full z-50 main-nav">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <a href="index.html">
+                            <img class="h-12 w-auto" src="src/images/ivms-logo.png" alt="IVMS Logo">
+                        </a>
+                    </div>
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                        <a href="index.html" class="nav-link">Home</a>
+                        <a href="rental-leasing.html" class="nav-link">Rental & Leasing</a>
+                        <a href="about.html" class="nav-link">About</a>
+                        <a href="contact.html" class="nav-link">Contact</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-20">
+        <!-- Header Section -->
+        <section class="py-12 bg-gradient-to-r from-[#004E98] to-[#00A3A3] text-white">
+            <div class="max-w-7xl mx-auto px-4 text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">
+                    ROI Calculator for Vehicle Rental Companies
+                </h1>
+                <p class="text-xl md:text-2xl opacity-90 max-w-3xl mx-auto">
+                    Calculate your potential returns and savings with iVMS fleet management solutions
+                </p>
+            </div>
+        </section>
+
+        <!-- Calculator Section -->
+        <section class="py-12">
+            <div class="calculator-container">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Input Section -->
+                    <div class="space-y-6">
+                        <div class="input-card">
+                            <h2 class="section-title">
+                                <i class="fas fa-calculator text-blue-600"></i>
+                                Fleet Information
+                            </h2>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="input-group">
+                                    <label class="input-label">Total Fleet Size</label>
+                                    <input type="number" id="fleetSize" class="input-field" placeholder="50" min="1">
+                                </div>
+                                
+                                <div class="input-group">
+                                    <label class="input-label">Current Utilization Rate</label>
+                                    <div class="percentage-input">
+                                        <input type="number" id="utilizationRate" class="input-field" placeholder="65" min="0" max="100">
+                                        <span class="percentage-symbol">%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="input-group">
+                                <label class="input-label">Average Rental Rate per Vehicle per Day</label>
+                                <div class="currency-input">
+                                    <span class="currency-symbol">$</span>
+                                    <input type="number" id="rentalRate" class="input-field" placeholder="150" min="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="input-card">
+                            <h2 class="section-title">
+                                <i class="fas fa-dollar-sign text-green-600"></i>
+                                Current Costs (Annual)
+                            </h2>
+                            
+                            <div class="input-group">
+                                <label class="input-label">Theft and Damage Costs</label>
+                                <div class="currency-input">
+                                    <span class="currency-symbol">$</span>
+                                    <input type="number" id="theftDamageCosts" class="input-field" placeholder="75000" min="0">
+                                </div>
+                            </div>
+                            
+                            <div class="input-group">
+                                <label class="input-label">Administrative and Management Costs</label>
+                                <div class="currency-input">
+                                    <span class="currency-symbol">$</span>
+                                    <input type="number" id="adminCosts" class="input-field" placeholder="120000" min="0">
+                                </div>
+                            </div>
+                            
+                            <div class="input-group">
+                                <label class="input-label">Insurance and Maintenance Expenses</label>
+                                <div class="currency-input">
+                                    <span class="currency-symbol">$</span>
+                                    <input type="number" id="insuranceMaintenance" class="input-field" placeholder="200000" min="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="input-card">
+                            <h2 class="section-title">
+                                <i class="fas fa-cogs text-purple-600"></i>
+                                iVMS Investment
+                            </h2>
+                            
+                            <div class="input-group">
+                                <label class="input-label">Annual iVMS Subscription Cost</label>
+                                <div class="currency-input">
+                                    <span class="currency-symbol">$</span>
+                                    <input type="number" id="ivmsCost" class="input-field" placeholder="25000" min="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Results Section -->
+                    <div class="space-y-6">
+                        <!-- Key Metrics -->
+                        <div class="results-card">
+                            <h2 class="section-title">
+                                <i class="fas fa-chart-line text-green-600"></i>
+                                Key Financial Metrics
+                            </h2>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="metric-card">
+                                    <div class="metric-value positive-metric" id="annualSavings">$0</div>
+                                    <div class="metric-label">Annual Savings</div>
+                                </div>
+                                
+                                <div class="metric-card">
+                                    <div class="metric-value positive-metric" id="revenueIncrease">$0</div>
+                                    <div class="metric-label">Revenue Increase</div>
+                                </div>
+                                
+                                <div class="metric-card">
+                                    <div class="metric-value" id="roiPercentage">0%</div>
+                                    <div class="metric-label">ROI Percentage</div>
+                                </div>
+                                
+                                <div class="metric-card">
+                                    <div class="metric-value" id="netBenefit">$0</div>
+                                    <div class="metric-label">Net Annual Benefit</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payback Period -->
+                        <div class="payback-period">
+                            <div class="payback-value" id="paybackPeriod">0</div>
+                            <div class="payback-label">Months to Break Even</div>
+                        </div>
+
+                        <!-- Detailed Benefits -->
+                        <div class="results-card">
+                            <h2 class="section-title">
+                                <i class="fas fa-list-check text-blue-600"></i>
+                                Detailed Benefits Breakdown
+                            </h2>
+                            
+                            <div class="space-y-0">
+                                <div class="benefit-item">
+                                    <span class="benefit-description">
+                                        <i class="fas fa-chart-up text-green-600 mr-2"></i>
+                                        40% Utilization Increase
+                                    </span>
+                                    <span class="benefit-value" id="utilizationBenefit">$0</span>
+                                </div>
+                                
+                                <div class="benefit-item">
+                                    <span class="benefit-description">
+                                        <i class="fas fa-shield-alt text-blue-600 mr-2"></i>
+                                        80% Theft/Damage Reduction
+                                    </span>
+                                    <span class="benefit-value" id="theftReduction">$0</span>
+                                </div>
+                                
+                                <div class="benefit-item">
+                                    <span class="benefit-description">
+                                        <i class="fas fa-car-crash text-orange-600 mr-2"></i>
+                                        30% Damage Cost Reduction
+                                    </span>
+                                    <span class="benefit-value" id="damageReduction">$0</span>
+                                </div>
+                                
+                                <div class="benefit-item">
+                                    <span class="benefit-description">
+                                        <i class="fas fa-tasks text-purple-600 mr-2"></i>
+                                        25% Admin Cost Reduction
+                                    </span>
+                                    <span class="benefit-value" id="adminReduction">$0</span>
+                                </div>
+                                
+                                <div class="benefit-item">
+                                    <span class="benefit-description">
+                                        <i class="fas fa-tools text-gray-600 mr-2"></i>
+                                        15% Maintenance Savings
+                                    </span>
+                                    <span class="benefit-value" id="maintenanceSavings">$0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Customer Satisfaction -->
+                        <div class="results-card">
+                            <h2 class="section-title">
+                                <i class="fas fa-smile text-yellow-500"></i>
+                                Customer Satisfaction Impact
+                            </h2>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="metric-card">
+                                    <div class="metric-value text-yellow-500" id="satisfactionScore">0</div>
+                                    <div class="metric-label">Satisfaction Score</div>
+                                </div>
+                                
+                                <div class="metric-card">
+                                    <div class="metric-value positive-metric" id="repeatCustomers">0%</div>
+                                    <div class="metric-label">Repeat Customers</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                                <p class="text-sm text-yellow-800">
+                                    <i class="fas fa-lightbulb mr-2"></i>
+                                    Enhanced vehicle tracking and security features lead to improved customer confidence and loyalty.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Competitive Advantage -->
+                        <div class="results-card">
+                            <h2 class="section-title">
+                                <i class="fas fa-trophy text-gold"></i>
+                                Competitive Advantages
+                            </h2>
+                            
+                            <div class="space-y-3">
+                                <div class="flex items-center p-3 bg-blue-50 rounded-lg">
+                                    <i class="fas fa-shield-check text-blue-600 mr-3"></i>
+                                    <span class="text-blue-800 font-medium">Enhanced security features differentiate your rental service</span>
+                                </div>
+                                
+                                <div class="flex items-center p-3 bg-green-50 rounded-lg">
+                                    <i class="fas fa-clock text-green-600 mr-3"></i>
+                                    <span class="text-green-800 font-medium">Faster rental processing improves customer experience</span>
+                                </div>
+                                
+                                <div class="flex items-center p-3 bg-purple-50 rounded-lg">
+                                    <i class="fas fa-chart-bar text-purple-600 mr-3"></i>
+                                    <span class="text-purple-800 font-medium">Data-driven insights enable premium pricing strategies</span>
+                                </div>
+                                
+                                <div class="flex items-center p-3 bg-orange-50 rounded-lg">
+                                    <i class="fas fa-handshake text-orange-600 mr-3"></i>
+                                    <span class="text-orange-800 font-medium">Reduced insurance premiums through proven safety measures</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Call to Action -->
+                        <div class="results-card text-center">
+                            <h3 class="text-xl font-bold mb-4">Ready to Transform Your Rental Business?</h3>
+                            <p class="text-gray-600 mb-6">Get a personalized demonstration of how iVMS can benefit your specific operation.</p>
+                            <button class="cta-button" onclick="window.location.href='contact.html'">
+                                Schedule Demo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- WhatsApp Button -->
+    <a href="https://wa.me/971585994323" class="fixed bottom-8 right-8 bg-[#25D366] text-white p-4 rounded-full shadow-lg z-40 transition-all duration-300">
+        <i class="fab fa-whatsapp text-3xl"></i>
+    </a>
+
+    <script>
+        // ROI Calculator Logic
+        class ROICalculator {
+            constructor() {
+                this.initializeInputs();
+                this.bindEvents();
+                this.calculate();
+            }
+
+            initializeInputs() {
+                // Set default values
+                document.getElementById('fleetSize').value = 50;
+                document.getElementById('utilizationRate').value = 65;
+                document.getElementById('rentalRate').value = 150;
+                document.getElementById('theftDamageCosts').value = 75000;
+                document.getElementById('adminCosts').value = 120000;
+                document.getElementById('insuranceMaintenance').value = 200000;
+                document.getElementById('ivmsCost').value = 25000;
+            }
+
+            bindEvents() {
+                const inputs = ['fleetSize', 'utilizationRate', 'rentalRate', 'theftDamageCosts', 
+                               'adminCosts', 'insuranceMaintenance', 'ivmsCost'];
+                
+                inputs.forEach(id => {
+                    document.getElementById(id).addEventListener('input', () => this.calculate());
+                });
+            }
+
+            getInputValues() {
+                return {
+                    fleetSize: parseFloat(document.getElementById('fleetSize').value) || 0,
+                    utilizationRate: parseFloat(document.getElementById('utilizationRate').value) || 0,
+                    rentalRate: parseFloat(document.getElementById('rentalRate').value) || 0,
+                    theftDamageCosts: parseFloat(document.getElementById('theftDamageCosts').value) || 0,
+                    adminCosts: parseFloat(document.getElementById('adminCosts').value) || 0,
+                    insuranceMaintenance: parseFloat(document.getElementById('insuranceMaintenance').value) || 0,
+                    ivmsCost: parseFloat(document.getElementById('ivmsCost').value) || 0
+                };
+            }
+
+            calculate() {
+                const inputs = this.getInputValues();
+                
+                // Current annual revenue
+                const currentAnnualRevenue = inputs.fleetSize * inputs.rentalRate * 365 * (inputs.utilizationRate / 100);
+                
+                // Benefits calculations
+                const utilizationIncrease = currentAnnualRevenue * 0.40; // 40% increase
+                const theftReduction = inputs.theftDamageCosts * 0.80; // 80% reduction
+                const damageReduction = inputs.theftDamageCosts * 0.30; // 30% additional damage reduction
+                const adminReduction = inputs.adminCosts * 0.25; // 25% reduction
+                const maintenanceSavings = inputs.insuranceMaintenance * 0.15; // 15% savings
+                
+                // Total benefits
+                const totalAnnualBenefits = utilizationIncrease + theftReduction + damageReduction + adminReduction + maintenanceSavings;
+                const netAnnualBenefit = totalAnnualBenefits - inputs.ivmsCost;
+                
+                // ROI calculations
+                const roiPercentage = inputs.ivmsCost > 0 ? ((netAnnualBenefit / inputs.ivmsCost) * 100) : 0;
+                const paybackPeriod = inputs.ivmsCost > 0 ? (inputs.ivmsCost / (totalAnnualBenefits / 12)) : 0;
+                
+                // Customer satisfaction metrics
+                const satisfactionScore = Math.min(10, 7.5 + (totalAnnualBenefits / currentAnnualRevenue) * 10);
+                const repeatCustomers = Math.min(95, 65 + (totalAnnualBenefits / currentAnnualRevenue) * 50);
+
+                // Update display
+                this.updateDisplay({
+                    annualSavings: totalAnnualBenefits - utilizationIncrease,
+                    revenueIncrease: utilizationIncrease,
+                    roiPercentage: roiPercentage,
+                    netBenefit: netAnnualBenefit,
+                    paybackPeriod: paybackPeriod,
+                    utilizationBenefit: utilizationIncrease,
+                    theftReduction: theftReduction,
+                    damageReduction: damageReduction,
+                    adminReduction: adminReduction,
+                    maintenanceSavings: maintenanceSavings,
+                    satisfactionScore: satisfactionScore,
+                    repeatCustomers: repeatCustomers
+                });
+            }
+
+            updateDisplay(results) {
+                // Format currency
+                const formatCurrency = (amount) => {
+                    return new Intl.NumberFormat('en-US', {
+                        style: 'currency',
+                        currency: 'USD',
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0
+                    }).format(amount);
+                };
+
+                // Format percentage
+                const formatPercentage = (percentage) => {
+                    return new Intl.NumberFormat('en-US', {
+                        style: 'percent',
+                        minimumFractionDigits: 1,
+                        maximumFractionDigits: 1
+                    }).format(percentage / 100);
+                };
+
+                // Update main metrics
+                document.getElementById('annualSavings').textContent = formatCurrency(results.annualSavings);
+                document.getElementById('revenueIncrease').textContent = formatCurrency(results.revenueIncrease);
+                document.getElementById('roiPercentage').textContent = formatPercentage(results.roiPercentage);
+                document.getElementById('netBenefit').textContent = formatCurrency(results.netBenefit);
+                document.getElementById('paybackPeriod').textContent = Math.ceil(results.paybackPeriod);
+
+                // Update benefit breakdown
+                document.getElementById('utilizationBenefit').textContent = formatCurrency(results.utilizationBenefit);
+                document.getElementById('theftReduction').textContent = formatCurrency(results.theftReduction);
+                document.getElementById('damageReduction').textContent = formatCurrency(results.damageReduction);
+                document.getElementById('adminReduction').textContent = formatCurrency(results.adminReduction);
+                document.getElementById('maintenanceSavings').textContent = formatCurrency(results.maintenanceSavings);
+
+                // Update customer satisfaction
+                document.getElementById('satisfactionScore').textContent = results.satisfactionScore.toFixed(1);
+                document.getElementById('repeatCustomers').textContent = results.repeatCustomers.toFixed(0) + '%';
+
+                // Color coding for ROI
+                const roiElement = document.getElementById('roiPercentage');
+                if (results.roiPercentage > 100) {
+                    roiElement.className = 'metric-value positive-metric';
+                } else if (results.roiPercentage > 0) {
+                    roiElement.className = 'metric-value';
+                    roiElement.style.color = '#F59E0B';
+                } else {
+                    roiElement.className = 'metric-value';
+                    roiElement.style.color = '#EF4444';
+                }
+
+                // Color coding for net benefit
+                const netBenefitElement = document.getElementById('netBenefit');
+                if (results.netBenefit > 0) {
+                    netBenefitElement.className = 'metric-value positive-metric';
+                } else {
+                    netBenefitElement.className = 'metric-value';
+                    netBenefitElement.style.color = '#EF4444';
+                }
+            }
+        }
+
+        // Initialize calculator when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new ROICalculator();
+        });
+    </script>
+</body>
+</html>
