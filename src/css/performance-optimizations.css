@@ -1,0 +1,294 @@
+/* Performance Optimizations and Browser Compatibility */
+
+/* === CRITICAL CSS OPTIMIZATIONS === */
+
+/* Preload key fonts and resources */
+@font-face {
+    font-family: 'Inter';
+    font-display: swap; /* Improve font loading performance */
+    src: url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+}
+
+/* Critical rendering path optimizations */
+* {
+    box-sizing: border-box;
+}
+
+html {
+    /* Improve scrolling performance */
+    scroll-behavior: smooth;
+    /* Better text rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+body {
+    /* Prevent horizontal scrolling */
+    overflow-x: hidden;
+    /* Improve scroll performance */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+}
+
+/* === BROWSER COMPATIBILITY === */
+
+/* CSS Grid fallbacks for older browsers */
+.grid-fallback {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+/* Support for older browsers that don't support CSS Grid */
+@supports not (display: grid) {
+    .grid {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    
+    .grid > * {
+        flex: 1;
+        min-width: 250px;
+    }
+}
+
+/* Flexbox fallbacks */
+.flex-fallback {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+/* CSS Custom Properties fallbacks */
+:root {
+    --primary-color: #004E98;
+    --secondary-color: #00A3A3;
+}
+
+.primary-color {
+    background-color: #004E98; /* Fallback */
+    background-color: var(--primary-color);
+}
+
+/* === PERFORMANCE ENHANCEMENTS === */
+
+/* Image optimization */
+img {
+    /* Improve image rendering */
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: optimize-contrast;
+    
+    /* Prevent layout shift */
+    height: auto;
+    max-width: 100%;
+    
+    /* Enable hardware acceleration for animations */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+}
+
+/* Lazy loading styles */
+img[data-src] {
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+img.loaded {
+    opacity: 1;
+}
+
+img.error {
+    opacity: 0.5;
+    filter: grayscale(100%);
+}
+
+/* Video optimization */
+video {
+    /* Improve video performance */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+}
+
+/* Animation optimizations */
+.animate-optimized {
+    /* Use transform and opacity for smooth animations */
+    will-change: transform, opacity;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+}
+
+/* Remove will-change after animation */
+.animate-optimized.animation-complete {
+    will-change: auto;
+}
+
+/* === ACCESSIBILITY ENHANCEMENTS === */
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .card, .button {
+        border: 2px solid;
+    }
+    
+    .text-muted {
+        color: #000;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Focus indicators */
+.focus-visible:focus,
+.focus-visible:focus-visible {
+    outline: 2px solid #00A3A3;
+    outline-offset: 2px;
+}
+
+/* Remove focus for mouse users */
+.focus-visible:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* === TOUCH DEVICE OPTIMIZATIONS === */
+
+/* Touch target sizing */
+.touch-target {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 12px;
+}
+
+/* Touch-friendly hover states */
+@media (hover: hover) {
+    .hover-effect:hover {
+        transform: translateY(-2px);
+        transition: transform 0.2s ease;
+    }
+}
+
+/* === PRINT STYLES === */
+@media print {
+    * {
+        background: transparent !important;
+        color: black !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+    
+    a, a:visited {
+        text-decoration: underline;
+    }
+    
+    .no-print {
+        display: none !important;
+    }
+}
+
+/* === LOADING STATES === */
+
+/* Loading skeleton animation */
+@keyframes skeleton-loading {
+    0% {
+        background-position: -200px 0;
+    }
+    100% {
+        background-position: calc(200px + 100%) 0;
+    }
+}
+
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200px 100%;
+    animation: skeleton-loading 1.2s ease-in-out infinite;
+}
+
+/* Loading spinner */
+.spinner {
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #00A3A3;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* === RESPONSIVE UTILITIES === */
+
+/* Container queries fallback */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* Responsive text sizing */
+.responsive-text {
+    font-size: clamp(1rem, 2.5vw, 2rem);
+}
+
+/* Responsive spacing */
+.responsive-spacing {
+    padding: clamp(1rem, 3vw, 3rem);
+    margin: clamp(0.5rem, 2vw, 2rem) 0;
+}
+
+/* === CRITICAL CSS FIXES === */
+
+/* Fix for iOS Safari viewport units */
+.full-height {
+    height: 100vh;
+    height: -webkit-fill-available;
+}
+
+/* Fix for Android Chrome address bar */
+@supports (-webkit-touch-callout: none) {
+    .full-height {
+        height: -webkit-fill-available;
+    }
+}
+
+/* Fix for old IE */
+.ie-fallback {
+    /* IE11 and below fallbacks */
+    display: -ms-flexbox;
+    -ms-flex-wrap: wrap;
+    -ms-flex-pack: justify;
+    -ms-flex-align: center;
+}
+
+/* === PERFORMANCE MONITORING === */
+
+/* Mark critical resources for performance monitoring */
+.critical-resource {
+    /* This class helps identify critical resources in performance tools */
+}
+
+/* === DARK MODE SUPPORT === */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text-color: #ffffff;
+        --bg-color: #1a1a1a;
+        --border-color: #333333;
+    }
+    
+    .auto-dark {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        border-color: var(--border-color);
+    }
+}

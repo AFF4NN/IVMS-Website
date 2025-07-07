@@ -442,15 +442,43 @@
             <div class="bg-white rounded-2xl shadow-lg p-8 mb-12">
                 <div class="flex flex-col md:flex-row gap-8 items-stretch min-h-[650px]">
                     <div class="flex-1 flex flex-col h-full">
-                        <form class="w-full max-w-lg space-y-4 h-full flex flex-col justify-between">
-                            <input type="text" name="first_name" placeholder="First name*" required class="w-full bg-gray-200 rounded-lg px-5 py-4 text-gray-900 text-base focus:outline-none focus:ring-2 focus:ring-[#0066cc]">
-                            <input type="text" name="last_name" placeholder="Last name*" required class="w-full bg-gray-200 rounded-lg px-5 py-4 text-gray-900 text-base focus:outline-none focus:ring-2 focus:ring-[#0066cc]">
-                            <input type="text" name="company" placeholder="Company*" required class="w-full bg-gray-200 rounded-lg px-5 py-4 text-gray-900 text-base focus:outline-none focus:ring-2 focus:ring-[#0066cc]">
-                            <input type="email" name="email" placeholder="E-Mail*" required class="w-full bg-gray-200 rounded-lg px-5 py-4 text-gray-900 text-base focus:outline-none focus:ring-2 focus:ring-[#0066cc]">
-                            <input type="tel" name="phone" placeholder="Phone*" required class="w-full bg-gray-200 rounded-lg px-5 py-4 text-gray-900 text-base focus:outline-none focus:ring-2 focus:ring-[#0066cc]">
-                            <input type="text" name="job_title" placeholder="Job title*" required class="w-full bg-gray-200 rounded-lg px-5 py-4 text-gray-900 text-base focus:outline-none focus:ring-2 focus:ring-[#0066cc]">
-                            <textarea name="message" placeholder="Message*" required rows="8" class="w-full bg-gray-200 rounded-lg px-5 py-4 text-gray-900 text-base focus:outline-none focus:ring-2 focus:ring-[#0066cc]"></textarea>
-                            <button type="submit" class="cta-bottom w-full md:w-auto mt-2">Submit enquiry</button>
+                        <form id="contact-form" class="w-full max-w-lg space-y-4 h-full flex flex-col justify-between" novalidate>
+                            <div class="form-group">
+                                <label for="first_name" class="sr-only">First Name (required)</label>
+                                <input type="text" id="first_name" name="first_name" placeholder="First name*" required aria-required="true" aria-describedby="first_name_error" class="w-full bg-gray-200 rounded-lg px-5 py-4 text-gray-900 text-base focus:outline-none focus:ring-2 focus:ring-[#0066cc] min-h-[44px]">
+                                <div id="first_name_error" class="error-message hidden text-red-600 text-sm mt-1" role="alert"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="last_name" class="sr-only">Last Name (required)</label>
+                                <input type="text" id="last_name" name="last_name" placeholder="Last name*" required aria-required="true" aria-describedby="last_name_error" class="w-full bg-gray-200 rounded-lg px-5 py-4 text-gray-900 text-base focus:outline-none focus:ring-2 focus:ring-[#0066cc] min-h-[44px]">
+                                <div id="last_name_error" class="error-message hidden text-red-600 text-sm mt-1" role="alert"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="company" class="sr-only">Company (required)</label>
+                                <input type="text" id="company" name="company" placeholder="Company*" required aria-required="true" aria-describedby="company_error" class="w-full bg-gray-200 rounded-lg px-5 py-4 text-gray-900 text-base focus:outline-none focus:ring-2 focus:ring-[#0066cc] min-h-[44px]">
+                                <div id="company_error" class="error-message hidden text-red-600 text-sm mt-1" role="alert"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="email" class="sr-only">Email Address (required)</label>
+                                <input type="email" id="email" name="email" placeholder="E-Mail*" required aria-required="true" aria-describedby="email_error" class="w-full bg-gray-200 rounded-lg px-5 py-4 text-gray-900 text-base focus:outline-none focus:ring-2 focus:ring-[#0066cc] min-h-[44px]">
+                                <div id="email_error" class="error-message hidden text-red-600 text-sm mt-1" role="alert"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone" class="sr-only">Phone Number (required)</label>
+                                <input type="tel" id="phone" name="phone" placeholder="Phone*" required aria-required="true" aria-describedby="phone_error" class="w-full bg-gray-200 rounded-lg px-5 py-4 text-gray-900 text-base focus:outline-none focus:ring-2 focus:ring-[#0066cc] min-h-[44px]">
+                                <div id="phone_error" class="error-message hidden text-red-600 text-sm mt-1" role="alert"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="job_title" class="sr-only">Job Title (required)</label>
+                                <input type="text" id="job_title" name="job_title" placeholder="Job title*" required aria-required="true" aria-describedby="job_title_error" class="w-full bg-gray-200 rounded-lg px-5 py-4 text-gray-900 text-base focus:outline-none focus:ring-2 focus:ring-[#0066cc] min-h-[44px]">
+                                <div id="job_title_error" class="error-message hidden text-red-600 text-sm mt-1" role="alert"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="message" class="sr-only">Message (required)</label>
+                                <textarea id="message" name="message" placeholder="Message*" required aria-required="true" aria-describedby="message_error" rows="8" class="w-full bg-gray-200 rounded-lg px-5 py-4 text-gray-900 text-base focus:outline-none focus:ring-2 focus:ring-[#0066cc] min-h-[120px]"></textarea>
+                                <div id="message_error" class="error-message hidden text-red-600 text-sm mt-1" role="alert"></div>
+                            </div>
+                            <button type="submit" class="cta-bottom w-full md:w-auto mt-2 min-h-[44px]">Submit enquiry</button>
                         </form>
                     </div>
                     <div class="flex-1 flex flex-col h-full">
@@ -568,5 +596,8 @@
           });
         });
     </script>
+    
+    <!-- Enhanced Contact Form Validation -->
+    <script src="src/js/contact-form.js"></script>
 </body>
 </html> 

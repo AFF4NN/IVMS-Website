@@ -9,6 +9,50 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/png" href="src/images/ivms-logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Performance and Browser Compatibility CSS -->
+    <link rel="stylesheet" href="src/css/performance-optimizations.css">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="src/js/main.js" as="script">
+    <link rel="preload" href="src/images/ivms-logo.png" as="image">
+    
+    <!-- DNS prefetch for external resources -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+    
+    <!-- Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "IVMS Group",
+        "description": "AI-powered fleet technology that predicts, optimises, and protects. Advanced telematics solutions for rental companies, logistics fleets, and transport operators.",
+        "url": "https://www.ivmsgroup.com",
+        "logo": "https://www.ivmsgroup.com/src/images/ivms-logo.png",
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+971-58-599-4323",
+            "contactType": "customer service",
+            "areaServed": "AE",
+            "availableLanguage": "en"
+        },
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Dubai",
+            "addressCountry": "AE"
+        },
+        "sameAs": [
+            "https://www.linkedin.com/company/ivms-group",
+            "https://twitter.com/ivmsgroup",
+            "https://www.facebook.com/ivmsgroup"
+        ],
+        "foundingDate": "2020",
+        "industry": "Fleet Management Technology",
+        "keywords": "fleet management, telematics, AI technology, vehicle tracking, speed cameras, logistics, rental fleet"
+    }
+    </script>
+    
     <style>
         :root {
             --primary-blue: #004E98;      /* Main brand blue - Use for primary CTAs, headings */
@@ -1603,10 +1647,10 @@
                         <li class="footer-text">Email: <a href="mailto:info@ivmsgroup.com" class="footer-link" style="color: #ffffff !important;">info@ivmsgroup.com</a></li>
                     </ul>
                     <div class="footer-social-links">
-                        <a href="#" class="footer-link" style="color: #ffffff !important;"><i class="fab fa-linkedin"></i></a>
-                        <a href="#" class="footer-link" style="color: #ffffff !important;"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="footer-link" style="color: #ffffff !important;"><i class="fab fa-facebook"></i></a>
-                        <a href="https://instagram.com/YOUR_INSTAGRAM" class="footer-link" style="color: #ffffff !important;"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.linkedin.com/company/ivms-group" target="_blank" rel="noopener noreferrer" aria-label="Follow us on LinkedIn" class="footer-link" style="color: #ffffff !important;"><i class="fab fa-linkedin" aria-hidden="true"></i></a>
+                        <a href="https://twitter.com/ivmsgroup" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Twitter" class="footer-link" style="color: #ffffff !important;"><i class="fab fa-twitter" aria-hidden="true"></i></a>
+                        <a href="https://www.facebook.com/ivmsgroup" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Facebook" class="footer-link" style="color: #ffffff !important;"><i class="fab fa-facebook" aria-hidden="true"></i></a>
+                        <a href="https://www.instagram.com/ivmsgroup" target="_blank" rel="noopener noreferrer" aria-label="Follow us on Instagram" class="footer-link" style="color: #ffffff !important;"><i class="fab fa-instagram" aria-hidden="true"></i></a>
                     </div>
                 </div>
             </div>
@@ -1623,6 +1667,31 @@
     </a>
 
     <script src="src/js/main.js"></script>
+    
+    <!-- Performance Optimization Scripts -->
+    <script src="src/js/image-optimization.js" defer></script>
+    
+    <!-- Service Worker Registration for PWA capabilities -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        // Service worker registered successfully (dev only logging)
+                        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                            console.log('SW registered:', registration);
+                        }
+                    })
+                    .catch((error) => {
+                        // Service worker registration failed (dev only logging)
+                        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                            console.log('SW registration failed:', error);
+                        }
+                    });
+            });
+        }
+    </script>
+    
     <script>
         // Video pause on scroll for better performance
         document.addEventListener('DOMContentLoaded', function() {
