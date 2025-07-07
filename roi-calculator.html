@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="IVMS ROI Calculator - Calculate your logistics fleet management savings and return on investment">
+    <title>ROI Calculator | IVMS - Intelligent Vehicle Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="icon" type="image/png" href="src/images/ivms-logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --primary-blue: #004E98;
+            --secondary-blue: #3A6EA5;
+            --teal-primary: #00A3A3;
+            --teal-light: #00D1D1;
+            --teal-dark: #007A7A;
+            --dark-bg: #0A0A0A;
+            --light-bg: #FFFFFF;
+            --text-primary: #2F2F2F;
+            --text-secondary: rgba(47, 47, 47, 0.8);
+            --text-light: #FFFFFF;
+            --text-muted: #666666;
+            --border-light: #EDEDED;
+            --font-family-primary: "Inter", sans-serif;
+        }
+        
+        .material-icons {
+            color: var(--primary-blue) !important;
+            font-family: 'Material Icons' !important;
+        }
+        
+        body {
+            font-family: var(--font-family-primary);
+            background-color: var(--light-bg);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            scroll-behavior: smooth;
+        }
+
+        /* Navigation styles (same as logistics.html) */
+        .main-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            border: none;
+            box-shadow: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            max-width: 100vw;
+            transition: background 0.2s, backdrop-filter 0.2s;
+        }
+
+        .nav-logo a {
+            display: block;
+            transition: all 0.3s ease;
+            border-radius: 6px;
+            padding: 4px;
+        }
+
+        .nav-logo a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            transform: scale(1.05);
+        }
+
+        .logo {
+            height: 64px;
+            max-width: 220px;
+            width: auto;
+            margin-right: 2rem;
+            transition: height 0.2s, max-width 0.2s;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-link {
+            color: #fff;
+            font-weight: 500;
+            font-size: 1.05rem;
+            padding: 0.5rem 1.2rem;
+            background: none;
+            border: none;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            position: relative;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        .nav-link:hover, .nav-link:focus {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+        }
+
+        /* Calculator specific styles */
+        .calculator-section {
+            padding-top: 120px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+
+        .calculator-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: #fff;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 78, 152, 0.1);
+        }
+
+        .select-field {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            background-color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .select-field:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 78, 152, 0.1);
+        }
+
+        .calculate-btn {
+            background: var(--primary-blue);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .calculate-btn:hover {
+            background: var(--secondary-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 78, 152, 0.3);
+        }
+
+        .results-section {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem;
+            overflow: hidden;
+        }
+
+        .results-header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .savings-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary-blue);
+        }
+
+        .savings-amount {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .savings-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin: 2rem 0;
+        }
+
+        .export-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .export-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .export-btn.pdf {
+            background: #dc2626;
+            color: white;
+        }
+
+        .export-btn.pdf:hover {
+            background: #b91c1c;
+        }
+
+        .export-btn.email {
+            background: var(--teal-primary);
+            color: white;
+        }
+
+        .export-btn.email:hover {
+            background: var(--teal-dark);
+        }
+
+        .roi-highlight {
+            background: linear-gradient(135deg, var(--teal-primary) 0%, var(--teal-light) 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .roi-percentage {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .payback-period {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .calculator-section {
+                padding-top: 100px;
+            }
+            
+            .export-buttons {
+                flex-direction: column;
+            }
+            
+            .roi-percentage {
+                font-size: 2rem;
+            }
+        }
+
+        .dropdown-menu { display: none; position: absolute; top: 100%; left: 0; margin-top: 0; }
+        .dropdown-menu.show { display: block !important; }
+        @media (min-width: 640px) {
+          .dropdown-parent:hover .dropdown-menu,
+          .dropdown-parent:focus-within .dropdown-menu {
+            display: block !important;
+          }
+        }
+        .dropdown-menu a { color: #fff !important; }
+
+        .footer-logo {
+            height: 50px;
+            margin-bottom: 1rem;
+            filter: brightness(0) invert(1);
+        }
+        .footer-text, .footer-link {
+            color: #ffffff;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+        .footer-link:hover {
+            opacity: 1;
+        }
+        .footer-heading {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+        .footer-social-links a {
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            color: #ffffff;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+        .footer-social-links a:hover {
+            opacity: 1;
+        }
+        .footer-divider {
+            border: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            margin: 2rem 0;
+        }
+        .footer-copyright {
+            font-size: 0.9rem;
+            text-align: center;
+            color: #ffffff;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="fixed w-full z-50 main-nav">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 nav-logo">
+                        <a href="index.html">
+                            <img class="h-12 w-auto" src="src/images/ivms-logo.png" alt="IVMS Logo">
+                        </a>
+                    </div>
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                        <a href="index.html" class="nav-link">Home</a>
+                        <div class="relative group dropdown-parent">
+                            <button class="nav-link dropdown-toggle">Solutions <i class="fas fa-chevron-down text-xs ml-1"></i></button>
+                            <div class="dropdown-menu absolute left-0 bg-gray-800 text-white mt-2 rounded-md shadow-lg z-20 min-w-[180px]">
+                                <a href="speedsense.html" class="block px-4 py-2 text-sm hover:bg-gray-700">SpeedSense</a>
+                                <a href="rental-leasing.html" class="block px-4 py-2 text-sm hover:bg-gray-700">Rental & Leasing</a>
+                                <a href="logistics.html" class="block px-4 py-2 text-sm hover:bg-gray-700">Logistics</a>
+                            </div>
+                        </div>
+                        <a href="governments.html" class="nav-link">Governments</a>
+                        <a href="about.html" class="nav-link">About</a>
+                        <a href="contact.html" class="nav-link">Contact</a>
+                    </div>
+                </div>
+                <div class="-mr-2 flex items-center sm:hidden">
+                    <button id="mobile-menu-button" type="button" class="inline-flex items-center justify-center p-2 rounded-md text-white hover:text-gray-200 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Calculator Section -->
+        <section class="calculator-section py-20">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="text-center mb-12">
+                    <h1 class="text-4xl md:text-5xl font-bold mb-6">Logistics ROI Calculator</h1>
+                    <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                        Calculate your potential savings and return on investment with iVMS Intelligent Logistics Platform. 
+                        Get detailed insights into cost reductions and efficiency improvements for your fleet.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Input Form -->
+                    <div class="calculator-container">
+                        <div class="p-8">
+                            <h2 class="text-2xl font-bold mb-6 text-center">Fleet Information</h2>
+                            
+                            <form id="roiCalculatorForm">
+                                <!-- Fleet Size -->
+                                <div class="input-group">
+                                    <label class="input-label">
+                                        <span class="material-icons text-sm mr-2">local_shipping</span>
+                                        Fleet Size (Number of Vehicles)
+                                    </label>
+                                    <input type="number" id="fleetSize" class="input-field" placeholder="e.g., 50" min="1" required>
+                                </div>
+
+                                <!-- Vehicle Type -->
+                                <div class="input-group">
+                                    <label class="input-label">
+                                        <span class="material-icons text-sm mr-2">category</span>
+                                        Primary Vehicle Type
+                                    </label>
+                                    <select id="vehicleType" class="select-field" required>
+                                        <option value="">Select vehicle type</option>
+                                        <option value="light">Light Commercial Vehicles</option>
+                                        <option value="medium">Medium Duty Trucks</option>
+                                        <option value="heavy">Heavy Duty Trucks</option>
+                                        <option value="mixed">Mixed Fleet</option>
+                                    </select>
+                                </div>
+
+                                <!-- Current Monthly Fuel Costs -->
+                                <div class="input-group">
+                                    <label class="input-label">
+                                        <span class="material-icons text-sm mr-2">local_gas_station</span>
+                                        Current Monthly Fuel Costs (AED)
+                                    </label>
+                                    <input type="number" id="fuelCosts" class="input-field" placeholder="e.g., 25000" min="0" required>
+                                </div>
+
+                                <!-- Driver Wages -->
+                                <div class="input-group">
+                                    <label class="input-label">
+                                        <span class="material-icons text-sm mr-2">person</span>
+                                        Monthly Driver Wages & Operational Costs (AED)
+                                    </label>
+                                    <input type="number" id="driverWages" class="input-field" placeholder="e.g., 75000" min="0" required>
+                                </div>
+
+                                <!-- Insurance Premiums -->
+                                <div class="input-group">
+                                    <label class="input-label">
+                                        <span class="material-icons text-sm mr-2">security</span>
+                                        Monthly Insurance Premiums (AED)
+                                    </label>
+                                    <input type="number" id="insuranceCosts" class="input-field" placeholder="e.g., 8000" min="0" required>
+                                </div>
+
+                                <!-- Maintenance Costs -->
+                                <div class="input-group">
+                                    <label class="input-label">
+                                        <span class="material-icons text-sm mr-2">build</span>
+                                        Monthly Maintenance & Repair Costs (AED)
+                                    </label>
+                                    <input type="number" id="maintenanceCosts" class="input-field" placeholder="e.g., 15000" min="0" required>
+                                </div>
+
+                                <!-- Current Deliveries Per Day -->
+                                <div class="input-group">
+                                    <label class="input-label">
+                                        <span class="material-icons text-sm mr-2">schedule</span>
+                                        Average Deliveries Per Vehicle Per Day
+                                    </label>
+                                    <input type="number" id="deliveriesPerDay" class="input-field" placeholder="e.g., 12" min="1" required>
+                                </div>
+
+                                <!-- Route Efficiency -->
+                                <div class="input-group">
+                                    <label class="input-label">
+                                        <span class="material-icons text-sm mr-2">route</span>
+                                        Current Route Optimization Level
+                                    </label>
+                                    <select id="routeEfficiency" class="select-field" required>
+                                        <option value="">Select current level</option>
+                                        <option value="poor">Poor (Manual planning)</option>
+                                        <option value="basic">Basic (Simple GPS routing)</option>
+                                        <option value="good">Good (Some optimization tools)</option>
+                                        <option value="excellent">Excellent (Advanced optimization)</option>
+                                    </select>
+                                </div>
+
+                                <!-- iVMS Implementation Cost -->
+                                <div class="input-group">
+                                    <label class="input-label">
+                                        <span class="material-icons text-sm mr-2">payments</span>
+                                        Estimated iVMS Monthly Cost (AED)
+                                    </label>
+                                    <input type="number" id="ivmsCost" class="input-field" placeholder="e.g., 5000" min="0" required>
+                                    <small class="text-gray-500 text-sm mt-1 block">Contact us for accurate pricing based on your fleet size</small>
+                                </div>
+
+                                <button type="submit" class="calculate-btn">
+                                    <span class="material-icons mr-2">calculate</span>
+                                    Calculate ROI
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Results Display -->
+                    <div class="results-section" id="resultsSection">
+                        <div class="results-header">
+                            <h2 class="text-3xl font-bold mb-2">Your ROI Analysis</h2>
+                            <p class="text-lg opacity-90">Projected savings with iVMS Logistics Platform</p>
+                        </div>
+                        
+                        <div class="p-8">
+                            <!-- ROI Highlight -->
+                            <div class="roi-highlight">
+                                <div class="roi-percentage" id="roiPercentage">0%</div>
+                                <div class="text-xl mb-2">Annual ROI</div>
+                                <div class="payback-period" id="paybackPeriod">Payback in 0 months</div>
+                            </div>
+
+                            <!-- Savings Breakdown -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                <div class="savings-card">
+                                    <div class="savings-amount" id="monthlySavings">AED 0</div>
+                                    <div class="savings-description">Monthly Savings</div>
+                                </div>
+                                <div class="savings-card">
+                                    <div class="savings-amount" id="annualSavings">AED 0</div>
+                                    <div class="savings-description">Annual Savings</div>
+                                </div>
+                            </div>
+
+                            <!-- Detailed Savings -->
+                            <h3 class="text-xl font-bold mb-4">Detailed Savings Breakdown</h3>
+                            <div class="space-y-4 mb-6" id="savingsBreakdown">
+                                <!-- Savings items will be populated by JavaScript -->
+                            </div>
+
+                            <!-- Charts -->
+                            <div class="chart-container">
+                                <canvas id="savingsChart"></canvas>
+                            </div>
+
+                            <div class="chart-container">
+                                <canvas id="roiChart"></canvas>
+                            </div>
+
+                            <!-- Export Buttons -->
+                            <div class="export-buttons">
+                                <button class="export-btn pdf" onclick="exportToPDF()">
+                                    <span class="material-icons">picture_as_pdf</span>
+                                    Download PDF Report
+                                </button>
+                                <button class="export-btn email" onclick="shareViaEmail()">
+                                    <span class="material-icons">email</span>
+                                    Share via Email
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black text-white py-12" style="background-color: #000000 !important; color: #ffffff !important;">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="flex flex-col items-center mb-4" style="color: #ffffff !important;">
+                    <img src="src/images/ivms-logo.png" alt="IVMS Logo" class="footer-logo">
+                    <p class="footer-text">Dubai, UAE</p>
+                </div>
+                <div style="color: #ffffff !important;">
+                    <h4 class="footer-heading">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="footer-link" style="color: #ffffff !important;">Home</a></li>
+                        <li><a href="logistics.html" class="footer-link" style="color: #ffffff !important;">Logistics Solutions</a></li>
+                        <li><a href="about.html" class="footer-link" style="color: #ffffff !important;">About</a></li>
+                        <li><a href="contact.html" class="footer-link" style="color: #ffffff !important;">Contact</a></li>
+                    </ul>
+                </div>
+                <div style="color: #ffffff !important;">
+                    <h4 class="footer-heading">Contact Us</h4>
+                    <ul class="space-y-2">
+                        <li class="footer-text">Phone: <a href="tel:+971585994323" class="footer-link" style="color: #ffffff !important;">+971 58 599 4323</a></li>
+                        <li class="footer-text">Email: <a href="mailto:info@ivmsgroup.com" class="footer-link" style="color: #ffffff !important;">info@ivmsgroup.com</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="footer-divider">
+            <div class="footer-copyright" style="color: #ffffff !important; opacity: 0.6;">
+                <p>&copy; 2025 IVMS Solutions. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Button -->
+    <a href="https://wa.me/971585994323" class="whatsapp-button fixed bottom-8 right-8 bg-[#25D366] text-white p-4 rounded-full shadow-lg z-40 transition-all duration-300">
+        <i class="fab fa-whatsapp text-3xl"></i>
+    </a>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script>
+        // Global variables for charts and results
+        let savingsChart, roiChart;
+        let calculationResults = {};
+
+        // Form submission handler
+        document.getElementById('roiCalculatorForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            calculateROI();
+        });
+
+        function calculateROI() {
+            // Get input values
+            const inputs = {
+                fleetSize: parseInt(document.getElementById('fleetSize').value),
+                vehicleType: document.getElementById('vehicleType').value,
+                fuelCosts: parseFloat(document.getElementById('fuelCosts').value),
+                driverWages: parseFloat(document.getElementById('driverWages').value),
+                insuranceCosts: parseFloat(document.getElementById('insuranceCosts').value),
+                maintenanceCosts: parseFloat(document.getElementById('maintenanceCosts').value),
+                deliveriesPerDay: parseFloat(document.getElementById('deliveriesPerDay').value),
+                routeEfficiency: document.getElementById('routeEfficiency').value,
+                ivmsCost: parseFloat(document.getElementById('ivmsCost').value)
+            };
+
+            // Validation
+            if (!validateInputs(inputs)) {
+                alert('Please fill in all required fields with valid values.');
+                return;
+            }
+
+            // Calculate savings based on iVMS improvements
+            const savings = {
+                fuelSavings: inputs.fuelCosts * 0.25, // 25% fuel cost reduction
+                maintenanceSavings: inputs.maintenanceCosts * 0.20, // 20% maintenance cost reduction
+                insuranceSavings: inputs.insuranceCosts * 0.15, // 15% insurance premium reduction
+                efficiencySavings: calculateEfficiencySavings(inputs), // Delivery efficiency improvements
+                overtimeSavings: inputs.driverWages * 0.08 // 8% reduction in overtime costs
+            };
+
+            // Calculate total savings
+            const monthlySavings = Object.values(savings).reduce((a, b) => a + b, 0);
+            const netMonthlySavings = monthlySavings - inputs.ivmsCost;
+            const annualSavings = netMonthlySavings * 12;
+
+            // Calculate ROI
+            const annualInvestment = inputs.ivmsCost * 12;
+            const roi = ((annualSavings / annualInvestment) * 100);
+            const paybackMonths = Math.ceil(annualInvestment / monthlySavings);
+
+            // Store results globally
+            calculationResults = {
+                inputs,
+                savings,
+                monthlySavings,
+                netMonthlySavings,
+                annualSavings,
+                roi,
+                paybackMonths
+            };
+
+            // Display results
+            displayResults();
+        }
+
+        function validateInputs(inputs) {
+            return Object.values(inputs).every(value => 
+                value !== '' && value !== null && !isNaN(value) && value >= 0
+            );
+        }
+
+        function calculateEfficiencySavings(inputs) {
+            // Calculate efficiency improvement based on current route optimization level
+            let improvementFactor;
+            switch(inputs.routeEfficiency) {
+                case 'poor': improvementFactor = 0.30; break;
+                case 'basic': improvementFactor = 0.25; break;
+                case 'good': improvementFactor = 0.15; break;
+                case 'excellent': improvementFactor = 0.05; break;
+                default: improvementFactor = 0.20;
+            }
+
+            // Estimate cost per delivery and calculate savings from efficiency improvements
+            const monthlyDeliveries = inputs.fleetSize * inputs.deliveriesPerDay * 30;
+            const currentCostPerDelivery = (inputs.fuelCosts + inputs.driverWages * 0.6) / monthlyDeliveries;
+            
+            return currentCostPerDelivery * monthlyDeliveries * improvementFactor;
+        }
+
+        function displayResults() {
+            const results = calculationResults;
+            
+            // Show results section
+            document.getElementById('resultsSection').style.display = 'block';
+            
+            // Update summary values
+            document.getElementById('roiPercentage').textContent = `${Math.round(results.roi)}%`;
+            document.getElementById('paybackPeriod').textContent = `Payback in ${results.paybackMonths} months`;
+            document.getElementById('monthlySavings').textContent = `AED ${Math.round(results.netMonthlySavings).toLocaleString()}`;
+            document.getElementById('annualSavings').textContent = `AED ${Math.round(results.annualSavings).toLocaleString()}`;
+            
+            // Update detailed breakdown
+            const breakdownHtml = `
+                <div class="savings-card">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <div class="font-semibold text-lg">Fuel Cost Reduction (25%)</div>
+                            <div class="text-sm text-gray-600">Through intelligent route optimization</div>
+                        </div>
+                        <div class="text-xl font-bold text-green-600">AED ${Math.round(results.savings.fuelSavings).toLocaleString()}</div>
+                    </div>
+                </div>
+                <div class="savings-card">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <div class="font-semibold text-lg">Maintenance Savings (20%)</div>
+                            <div class="text-sm text-gray-600">From predictive maintenance alerts</div>
+                        </div>
+                        <div class="text-xl font-bold text-green-600">AED ${Math.round(results.savings.maintenanceSavings).toLocaleString()}</div>
+                    </div>
+                </div>
+                <div class="savings-card">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <div class="font-semibold text-lg">Insurance Premium Reduction (15%)</div>
+                            <div class="text-sm text-gray-600">Through driver monitoring and safety improvements</div>
+                        </div>
+                        <div class="text-xl font-bold text-green-600">AED ${Math.round(results.savings.insuranceSavings).toLocaleString()}</div>
+                    </div>
+                </div>
+                <div class="savings-card">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <div class="font-semibold text-lg">Efficiency Improvements</div>
+                            <div class="text-sm text-gray-600">Better delivery scheduling and route planning</div>
+                        </div>
+                        <div class="text-xl font-bold text-green-600">AED ${Math.round(results.savings.efficiencySavings).toLocaleString()}</div>
+                    </div>
+                </div>
+                <div class="savings-card">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <div class="font-semibold text-lg">Reduced Overtime Costs</div>
+                            <div class="text-sm text-gray-600">Through better scheduling and efficiency</div>
+                        </div>
+                        <div class="text-xl font-bold text-green-600">AED ${Math.round(results.savings.overtimeSavings).toLocaleString()}</div>
+                    </div>
+                </div>
+                <div class="savings-card bg-red-50 border-red-200">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <div class="font-semibold text-lg text-red-700">iVMS Platform Cost</div>
+                            <div class="text-sm text-red-600">Monthly subscription and implementation</div>
+                        </div>
+                        <div class="text-xl font-bold text-red-600">-AED ${Math.round(results.inputs.ivmsCost).toLocaleString()}</div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('savingsBreakdown').innerHTML = breakdownHtml;
+            
+            // Create charts
+            createCharts();
+            
+            // Scroll to results
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function createCharts() {
+            const results = calculationResults;
+            
+            // Destroy existing charts if they exist
+            if (savingsChart) savingsChart.destroy();
+            if (roiChart) roiChart.destroy();
+            
+            // Savings breakdown chart
+            const ctx1 = document.getElementById('savingsChart').getContext('2d');
+            savingsChart = new Chart(ctx1, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Fuel Savings', 'Maintenance Savings', 'Insurance Savings', 'Efficiency Gains', 'Overtime Reduction'],
+                    datasets: [{
+                        data: [
+                            results.savings.fuelSavings,
+                            results.savings.maintenanceSavings,
+                            results.savings.insuranceSavings,
+                            results.savings.efficiencySavings,
+                            results.savings.overtimeSavings
+                        ],
+                        backgroundColor: [
+                            '#004E98',
+                            '#3A6EA5',
+                            '#00A3A3',
+                            '#00D1D1',
+                            '#007A7A'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Monthly Savings Breakdown (AED)',
+                            font: { size: 16, weight: 'bold' }
+                        },
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+            
+            // ROI timeline chart
+            const ctx2 = document.getElementById('roiChart').getContext('2d');
+            const months = Array.from({length: 24}, (_, i) => `Month ${i + 1}`);
+            const cumulativeSavings = months.map((_, i) => (i + 1) * results.netMonthlySavings);
+            const investment = Array(24).fill(results.inputs.ivmsCost * 12);
+            
+            roiChart = new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Cumulative Savings',
+                        data: cumulativeSavings,
+                        borderColor: '#00A3A3',
+                        backgroundColor: 'rgba(0, 163, 163, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }, {
+                        label: 'Total Investment',
+                        data: investment,
+                        borderColor: '#004E98',
+                        backgroundColor: 'rgba(0, 78, 152, 0.1)',
+                        fill: false,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'ROI Timeline - 2 Year Projection (AED)',
+                            font: { size: 16, weight: 'bold' }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'AED ' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function exportToPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const results = calculationResults;
+            
+            // Title
+            doc.setFontSize(20);
+            doc.setFont(undefined, 'bold');
+            doc.text('iVMS Logistics ROI Report', 20, 30);
+            
+            // Company info
+            doc.setFontSize(12);
+            doc.setFont(undefined, 'normal');
+            doc.text('Generated by IVMS Intelligent Vehicle Management System', 20, 40);
+            doc.text(`Report Date: ${new Date().toLocaleDateString()}`, 20, 50);
+            
+            // Fleet summary
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.text('Fleet Summary', 20, 70);
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            doc.text(`Fleet Size: ${results.inputs.fleetSize} vehicles`, 20, 80);
+            doc.text(`Vehicle Type: ${results.inputs.vehicleType}`, 20, 90);
+            doc.text(`Current Monthly Fuel Costs: AED ${results.inputs.fuelCosts.toLocaleString()}`, 20, 100);
+            doc.text(`Current Monthly Maintenance Costs: AED ${results.inputs.maintenanceCosts.toLocaleString()}`, 20, 110);
+            
+            // ROI Summary
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.text('ROI Analysis', 20, 130);
+            doc.setFontSize(12);
+            doc.setFont(undefined, 'normal');
+            doc.text(`Annual ROI: ${Math.round(results.roi)}%`, 20, 145);
+            doc.text(`Payback Period: ${results.paybackMonths} months`, 20, 155);
+            doc.text(`Monthly Net Savings: AED ${Math.round(results.netMonthlySavings).toLocaleString()}`, 20, 165);
+            doc.text(`Annual Net Savings: AED ${Math.round(results.annualSavings).toLocaleString()}`, 20, 175);
+            
+            // Savings breakdown
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.text('Savings Breakdown (Monthly)', 20, 195);
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'normal');
+            doc.text(`Fuel Cost Reduction (25%): AED ${Math.round(results.savings.fuelSavings).toLocaleString()}`, 20, 205);
+            doc.text(`Maintenance Savings (20%): AED ${Math.round(results.savings.maintenanceSavings).toLocaleString()}`, 20, 215);
+            doc.text(`Insurance Premium Reduction (15%): AED ${Math.round(results.savings.insuranceSavings).toLocaleString()}`, 20, 225);
+            doc.text(`Efficiency Improvements: AED ${Math.round(results.savings.efficiencySavings).toLocaleString()}`, 20, 235);
+            doc.text(`Overtime Cost Reduction: AED ${Math.round(results.savings.overtimeSavings).toLocaleString()}`, 20, 245);
+            doc.text(`iVMS Platform Cost: -AED ${Math.round(results.inputs.ivmsCost).toLocaleString()}`, 20, 255);
+            
+            // Footer
+            doc.setFontSize(8);
+            doc.text('For more information, contact IVMS at +971 58 599 4323 or info@ivmsgroup.com', 20, 280);
+            
+            doc.save('IVMS-Logistics-ROI-Report.pdf');
+        }
+
+        function shareViaEmail() {
+            const results = calculationResults;
+            const subject = 'iVMS Logistics ROI Analysis Results';
+            const body = `I've calculated potential savings with iVMS Logistics Platform:
+
+Fleet Size: ${results.inputs.fleetSize} vehicles
+Annual ROI: ${Math.round(results.roi)}%
+Payback Period: ${results.paybackMonths} months
+Monthly Net Savings: AED ${Math.round(results.netMonthlySavings).toLocaleString()}
+Annual Net Savings: AED ${Math.round(results.annualSavings).toLocaleString()}
+
+Key Savings Areas:
+- Fuel Cost Reduction: AED ${Math.round(results.savings.fuelSavings).toLocaleString()}/month
+- Maintenance Savings: AED ${Math.round(results.savings.maintenanceSavings).toLocaleString()}/month
+- Insurance Premium Reduction: AED ${Math.round(results.savings.insuranceSavings).toLocaleString()}/month
+
+Contact IVMS for a detailed consultation:
+Phone: +971 58 599 4323
+Email: info@ivmsgroup.com`;
+
+            const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            window.location.href = mailtoLink;
+        }
+
+        // Navigation dropdown functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.dropdown-parent').forEach(function(parent) {
+                var btn = parent.querySelector('.dropdown-toggle');
+                var menu = parent.querySelector('.dropdown-menu');
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    var isOpen = menu.classList.contains('show');
+                    document.querySelectorAll('.dropdown-menu').forEach(function(m) { m.classList.remove('show'); });
+                    if (!isOpen) menu.classList.add('show');
+                });
+                parent.addEventListener('mouseleave', function() {
+                    menu.classList.remove('show');
+                });
+            });
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.dropdown-parent')) {
+                    document.querySelectorAll('.dropdown-menu').forEach(function(m) { m.classList.remove('show'); });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
