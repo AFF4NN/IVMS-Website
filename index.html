@@ -625,7 +625,6 @@
             filter: grayscale(0%);
             transform: scale(1.05);
         }
-        
         .section-divider {
             height: 1px;
             background: linear-gradient(90deg, transparent 0%, var(--teal-primary) 50%, transparent 100%);
@@ -828,9 +827,9 @@
         }
         .process-line {
             position: absolute;
-            top: 90px; /* 50px (top) + 40px (half of 80px circle) */
-            left: calc(12.5% + 40px); /* Start after first circle */
-            width: calc(75% - 80px); /* End before last circle */
+            top: 90px; /* Align with circle centers */
+            left: calc(12.5% + 40px); /* Start after first circle edge */
+            width: calc(75% - 80px); /* End before last circle edge */
             height: 0;
             border-top: 1.5px solid #b0b0b0;
             z-index: 1;
@@ -1468,6 +1467,13 @@
                 transition-duration: 0.01ms !important;
             }
         }
+        /* Remove the old .process-line CSS and add new for .process-step */
+        .process-step {
+            position: relative;
+        }
+        @media (max-width: 1100px) {
+            /* No need for responsive line hiding */
+        }
     </style>
 </head>
 <body>
@@ -1759,30 +1765,37 @@
             <h2 class="text-4xl font-bold text-center mb-4" style="letter-spacing:-1px;">How It Works<span style="color:#0066cc;">.</span></h2>
             <div class="text-center text-lg text-gray-600 mb-14">Seamless onboarding and intelligent fleet management in four simple steps.</div>
             <div class="process-cards">
-                <div class="process-line"></div>
                 <!-- Step 1 -->
-                <div class="process-card scroll-animate">
-                    <div class="process-number">1</div>
-                    <div class="process-title">Install</div>
-                    <div class="process-desc">Quick device installation in vehicles by certified technicians. Minimal downtime, maximum reliability.</div>
+                <div class="process-step">
+                    <div class="process-card scroll-animate">
+                        <div class="process-number">1</div>
+                        <div class="process-title">Install</div>
+                        <div class="process-desc">Quick device installation in vehicles by certified technicians. Minimal downtime, maximum reliability.</div>
+                    </div>
                 </div>
                 <!-- Step 2 -->
-                <div class="process-card scroll-animate">
-                    <div class="process-number">2</div>
-                    <div class="process-title">Connect</div>
-                    <div class="process-desc">Securely connect your fleet to our cloud platform. Encrypted data transfer ensures privacy and compliance.</div>
+                <div class="process-step">
+                    <div class="process-card scroll-animate">
+                        <div class="process-number">2</div>
+                        <div class="process-title">Connect</div>
+                        <div class="process-desc">Securely connect your fleet to our cloud platform. Encrypted data transfer ensures privacy and compliance.</div>
+                    </div>
                 </div>
                 <!-- Step 3 -->
-                <div class="process-card scroll-animate">
-                    <div class="process-number">3</div>
-                    <div class="process-title">Monitor</div>
-                    <div class="process-desc">Access real-time insights and analytics via web or mobile. Monitor vehicle health, driver behaviour, and more.</div>
+                <div class="process-step">
+                    <div class="process-card scroll-animate">
+                        <div class="process-number">3</div>
+                        <div class="process-title">Monitor</div>
+                        <div class="process-desc">Access real-time insights and analytics via web or mobile. Monitor vehicle health, driver behaviour, and more.</div>
+                    </div>
                 </div>
                 <!-- Step 4 -->
-                <div class="process-card scroll-animate">
-                    <div class="process-number">4</div>
-                    <div class="process-title">Optimise</div>
-                    <div class="process-desc">Leverage AI-driven recommendations to optimise routes, reduce costs, and improve safety across your fleet.</div>
+                <div class="process-step">
+                    <div class="process-card scroll-animate">
+                        <div class="process-number">4</div>
+                        <div class="process-title">Optimise</div>
+                        <div class="process-desc">Leverage AI-driven recommendations to optimise routes, reduce costs, and improve safety across your fleet.</div>
+                    </div>
                 </div>
             </div>
         </div>
