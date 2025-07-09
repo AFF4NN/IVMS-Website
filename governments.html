@@ -1020,33 +1020,33 @@
                         </ul>
                     </div>
                     <div class="animate-on-scroll">
-                        <form class="space-y-6">
+                        <form action="/submit-government" method="POST" class="space-y-6">
                             <div>
                                 <label class="form-label">Government Department</label>
-                                <input type="text" class="form-input" placeholder="e.g., Transport, Law Enforcement, Emergency Services">
+                                <input type="text" name="government_department" class="form-input" placeholder="e.g., Transport, Law Enforcement, Emergency Services" required>
                             </div>
                             <div>
                                 <label class="form-label">Fleet Size</label>
-                                <select class="form-input">
-                                    <option>Select fleet size</option>
-                                    <option>1-50 vehicles</option>
-                                    <option>51-200 vehicles</option>
-                                    <option>201-500 vehicles</option>
-                                    <option>500+ vehicles</option>
+                                <select name="fleet_size" class="form-input" required>
+                                    <option value="">Select fleet size</option>
+                                    <option value="1-50 vehicles">1-50 vehicles</option>
+                                    <option value="51-200 vehicles">51-200 vehicles</option>
+                                    <option value="201-500 vehicles">201-500 vehicles</option>
+                                    <option value="500+ vehicles">500+ vehicles</option>
                                 </select>
                             </div>
                             <div>
                                 <label class="form-label">Current Challenges</label>
-                                <textarea class="form-input" rows="3" placeholder="Describe your current transportation management challenges"></textarea>
+                                <textarea name="current_challenges" class="form-input" rows="3" placeholder="Describe your current transportation management challenges" required></textarea>
                             </div>
                             <div>
                                 <label class="form-label">Implementation Timeline</label>
-                                <select class="form-input">
-                                    <option>Select timeline</option>
-                                    <option>Immediate (0-3 months)</option>
-                                    <option>Short-term (3-6 months)</option>
-                                    <option>Medium-term (6-12 months)</option>
-                                    <option>Long-term (12+ months)</option>
+                                <select name="implementation_timeline" class="form-input" required>
+                                    <option value="">Select timeline</option>
+                                    <option value="Immediate (0-3 months)">Immediate (0-3 months)</option>
+                                    <option value="Short-term (3-6 months)">Short-term (3-6 months)</option>
+                                    <option value="Medium-term (6-12 months)">Medium-term (6-12 months)</option>
+                                    <option value="Long-term (12+ months)">Long-term (12+ months)</option>
                                 </select>
                             </div>
                             <button type="submit" class="btn-primary w-full">Schedule Government Demo</button>
@@ -1096,6 +1096,7 @@
     </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script src="src/js/flash-messages.js"></script>
     
     <!-- Breadcrumb JavaScript -->
     <script>
