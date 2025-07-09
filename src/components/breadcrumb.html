@@ -1,0 +1,249 @@
+<nav aria-label="Breadcrumb" class="breadcrumb-nav">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <ol class="breadcrumb-list" itemscope itemtype="https://schema.org/BreadcrumbList">
+            <!-- Dynamic breadcrumb items will be inserted here -->
+        </ol>
+    </div>
+</nav>
+
+<style>
+.breadcrumb-nav {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid #e5e7eb;
+    padding: 0.75rem 0;
+    margin-top: 64px; /* Account for fixed header */
+    position: relative;
+    z-index: 10;
+}
+
+.breadcrumb-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 0.875rem;
+    gap: 0.5rem;
+}
+
+.breadcrumb-item {
+    display: flex;
+    align-items: center;
+}
+
+.breadcrumb-link {
+    color: #6b7280;
+    text-decoration: none;
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+}
+
+.breadcrumb-link:hover {
+    color: #004E98;
+    background-color: rgba(0, 78, 152, 0.1);
+}
+
+.breadcrumb-link:focus {
+    outline: 2px solid #004E98;
+    outline-offset: 2px;
+}
+
+.breadcrumb-current {
+    color: #004E98;
+    font-weight: 600;
+    padding: 0.5rem 0.75rem;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+}
+
+.breadcrumb-separator {
+    color: #9ca3af;
+    margin: 0 0.25rem;
+    user-select: none;
+    font-size: 0.75rem;
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+    .breadcrumb-nav {
+        padding: 0.5rem 0;
+        margin-top: 60px; /* Adjust for smaller mobile header */
+    }
+    
+    .breadcrumb-list {
+        font-size: 0.8rem;
+        gap: 0.25rem;
+    }
+    
+    .breadcrumb-link,
+    .breadcrumb-current {
+        padding: 0.5rem 0.5rem;
+        min-width: 44px;
+        min-height: 44px;
+    }
+    
+    /* Truncate long breadcrumb text on mobile */
+    .breadcrumb-link,
+    .breadcrumb-current {
+        max-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    .breadcrumb-separator {
+        margin: 0 0.125rem;
+    }
+}
+
+/* Very small mobile screens */
+@media (max-width: 375px) {
+    .breadcrumb-list {
+        font-size: 0.75rem;
+    }
+    
+    .breadcrumb-link,
+    .breadcrumb-current {
+        max-width: 100px;
+        padding: 0.4rem 0.4rem;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .breadcrumb-link {
+        border: 1px solid transparent;
+    }
+    
+    .breadcrumb-link:hover,
+    .breadcrumb-link:focus {
+        border-color: #004E98;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .breadcrumb-link {
+        transition: none;
+    }
+}
+</style>
+
+<script>
+// Breadcrumb functionality
+function initializeBreadcrumb() {
+    const breadcrumbList = document.querySelector('.breadcrumb-list');
+    if (!breadcrumbList) return;
+    
+    const currentPath = window.location.pathname;
+    const currentPage = currentPath.split('/').pop() || 'index.html';
+    
+    // Define breadcrumb configurations for each page
+    const breadcrumbConfig = {
+        'about.html': [
+            { text: 'Home', url: 'index.html', icon: '🏠' },
+            { text: 'About', current: true }
+        ],
+        'contact.html': [
+            { text: 'Home', url: 'index.html', icon: '🏠' },
+            { text: 'Contact', current: true }
+        ],
+        'governments.html': [
+            { text: 'Home', url: 'index.html', icon: '🏠' },
+            { text: 'Governments', current: true }
+        ],
+        'speedsense.html': [
+            { text: 'Home', url: 'index.html', icon: '🏠' },
+            { text: 'Solutions', url: 'index.html#solutions' },
+            { text: 'SpeedSense', current: true }
+        ],
+        'logistics.html': [
+            { text: 'Home', url: 'index.html', icon: '🏠' },
+            { text: 'Solutions', url: 'index.html#solutions' },
+            { text: 'Logistics', current: true }
+        ],
+        'rental-leasing.html': [
+            { text: 'Home', url: 'index.html', icon: '🏠' },
+            { text: 'Solutions', url: 'index.html#solutions' },
+            { text: 'Rental & Leasing', current: true }
+        ]
+    };
+    
+    const breadcrumbs = breadcrumbConfig[currentPage];
+    if (!breadcrumbs) return;
+    
+    let breadcrumbHTML = '';
+    
+    breadcrumbs.forEach((item, index) => {
+        const isLast = index === breadcrumbs.length - 1;
+        
+        if (item.current || isLast) {
+            breadcrumbHTML += `
+                <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <span class="breadcrumb-current" itemprop="name" aria-current="page">
+                        ${item.icon ? item.icon + ' ' : ''}${item.text}
+                    </span>
+                    <meta itemprop="position" content="${index + 1}" />
+                </li>
+            `;
+        } else {
+            breadcrumbHTML += `
+                <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a href="${item.url}" class="breadcrumb-link" itemprop="item" aria-label="Navigate to ${item.text}">
+                        <span itemprop="name">${item.icon ? item.icon + ' ' : ''}${item.text}</span>
+                    </a>
+                    <meta itemprop="position" content="${index + 1}" />
+                </li>
+            `;
+        }
+        
+        // Add separator if not the last item
+        if (!isLast) {
+            breadcrumbHTML += `
+                <li class="breadcrumb-separator" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M6.22 3.22a.75.75 0 011.06 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.06-1.06L9.94 8 6.22 4.28a.75.75 0 010-1.06z"/>
+                    </svg>
+                </li>
+            `;
+        }
+    });
+    
+    breadcrumbList.innerHTML = breadcrumbHTML;
+}
+
+// Initialize breadcrumb when DOM is loaded
+document.addEventListener('DOMContentLoaded', initializeBreadcrumb);
+
+// Handle touch events for better mobile interaction
+document.addEventListener('DOMContentLoaded', function() {
+    const breadcrumbLinks = document.querySelectorAll('.breadcrumb-link');
+    
+    breadcrumbLinks.forEach(link => {
+        // Add touch feedback
+        link.addEventListener('touchstart', function() {
+            this.style.backgroundColor = 'rgba(0, 78, 152, 0.15)';
+        });
+        
+        link.addEventListener('touchend', function() {
+            setTimeout(() => {
+                this.style.backgroundColor = '';
+            }, 150);
+        });
+        
+        link.addEventListener('touchcancel', function() {
+            this.style.backgroundColor = '';
+        });
+    });
+});
+</script>
