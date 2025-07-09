@@ -829,8 +829,8 @@
         .process-line {
             position: absolute;
             top: 90px; /* 50px (top) + 40px (half of 80px circle) */
-            left: 10%;
-            width: 80%;
+            left: calc(12.5% + 40px); /* Start after first circle */
+            width: calc(75% - 80px); /* End before last circle */
             height: 0;
             border-top: 1.5px solid #b0b0b0;
             z-index: 1;
